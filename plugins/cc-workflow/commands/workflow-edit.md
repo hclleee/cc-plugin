@@ -15,14 +15,7 @@ description: 워크플로우 편집 - AI 기반으로 기존 워크플로우 수
 
 2. **현재 워크플로우 표시**
    - 워크플로우 JSON 로드
-   - 현재 구조를 시각적으로 표시:
-   ```
-   현재 워크플로우: code-review (v1.0.0)
-
-   start → analyze → has-bugs?
-     ├─ Yes → suggest-fix → end
-     └─ No → approve → end
-   ```
+   - `/workflow-show`와 동일한 형식으로 현재 구조 표시
 
 3. **수정 요청 수집**
    - 사용자에게 수정 사항 입력 요청
@@ -53,22 +46,34 @@ description: 워크플로우 편집 - AI 기반으로 기존 워크플로우 수
 ## 워크플로우 편집: code-review
 
 ### 현재 구조 (v1.0.0)
-start → analyze → has-bugs?
-  ├─ Yes → suggest-fix → end
-  └─ No → approve → end
+
+○ start
+│
+├── ◈ subagent "코드 분석"
+│
+├── ◊ ifelse "버그 존재 여부"
+│   ├─✓ "버그 있음" → ◈ subagent "수정 제안" → ● end
+│   └─✗ "버그 없음" → ◇ prompt "승인" → ● end
 
 무엇을 수정하시겠습니까?
 
 [사용자: "분석 전에 PR 정보를 가져오는 단계 추가해줘"]
 
 ### 변경 사항
-- 추가: subAgent 'fetch-pr' (PR 정보 조회)
+- 추가: ◈ subagent "PR 정보 조회"
 - 수정: start → fetch-pr → analyze 연결
 
 ### 수정된 구조 (v1.0.1)
-start → fetch-pr → analyze → has-bugs?
-  ├─ Yes → suggest-fix → end
-  └─ No → approve → end
+
+○ start
+│
+├── ◈ subagent "PR 정보 조회"
+│
+├── ◈ subagent "코드 분석"
+│
+├── ◊ ifelse "버그 존재 여부"
+│   ├─✓ "버그 있음" → ◈ subagent "수정 제안" → ● end
+│   └─✗ "버그 없음" → ◇ prompt "승인" → ● end
 
 변경 사항을 저장하시겠습니까?
 ```
