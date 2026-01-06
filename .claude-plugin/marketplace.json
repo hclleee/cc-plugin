@@ -1,0 +1,17 @@
+{
+  "name": "cc-plugins",
+  "owner": {
+    "name": "hclleee"
+  },
+  "metadata": {
+    "description": "Claude Code 플러그인 모음"
+  },
+  "plugins": [
+    {
+      "name": "cc-workflow",
+      "source": "./plugins/cc-workflow",
+      "description": "AI 기반 워크플로우 생성, 편집, 실행",
+      "version": "1.0.0"
+    }
+  ]
+}
