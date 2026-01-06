@@ -1,0 +1,9 @@
+{
+  "name": "cc-workflow",
+  "version": "1.0.0",
+  "description": "Claude Code workflow management plugin - AI-based workflow creation, editing, and execution",
+  "author": "hclleee",
+  "commands": "commands/",
+  "agents": "agents/",
+  "skills": "skills/"
+}

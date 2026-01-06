@@ -1,0 +1,86 @@
+---
+description: 워크플로우 편집 - AI 기반으로 기존 워크플로우 수정
+---
+
+# 워크플로우 편집
+
+기존 워크플로우를 AI의 도움으로 수정합니다.
+
+## 실행 절차
+
+1. **워크플로우 선택**
+   - 인자로 워크플로우 이름이 제공되지 않으면:
+     - `/workflow-list` 결과를 보여주고
+     - 편집할 워크플로우 이름 입력 요청
+
+2. **현재 워크플로우 표시**
+   - 워크플로우 JSON 로드
+   - 현재 구조를 시각적으로 표시:
+   ```
+   현재 워크플로우: code-review (v1.0.0)
+
+   start → analyze → has-bugs?
+     ├─ Yes → suggest-fix → end
+     └─ No → approve → end
+   ```
+
+3. **수정 요청 수집**
+   - 사용자에게 수정 사항 입력 요청
+   - 예: "분석 후에 테스트 실행 단계를 추가해줘"
+
+4. **workflow-refiner 에이전트 호출**
+   - Task 도구로 `workflow-refiner` 서브에이전트 실행
+   - 입력: 현재 워크플로우 + 수정 요청
+   - 출력: 수정된 워크플로우 JSON
+
+5. **변경 사항 확인**
+   - 변경 전/후 비교 표시
+   - 사용자 확인 요청
+
+6. **저장**
+   - 확인 시 파일 덮어쓰기
+   - 버전 자동 증가 (patch)
+
+## 사용 예시
+
+```
+/workflow-edit code-review
+```
+
+## 출력 예시
+
+```
+## 워크플로우 편집: code-review
+
+### 현재 구조 (v1.0.0)
+start → analyze → has-bugs?
+  ├─ Yes → suggest-fix → end
+  └─ No → approve → end
+
+무엇을 수정하시겠습니까?
+
+[사용자: "분석 전에 PR 정보를 가져오는 단계 추가해줘"]
+
+### 변경 사항
+- 추가: subAgent 'fetch-pr' (PR 정보 조회)
+- 수정: start → fetch-pr → analyze 연결
+
+### 수정된 구조 (v1.0.1)
+start → fetch-pr → analyze → has-bugs?
+  ├─ Yes → suggest-fix → end
+  └─ No → approve → end
+
+변경 사항을 저장하시겠습니까?
+```
+
+## 반복 편집
+
+한 세션에서 여러 번 수정 가능:
+1. 첫 번째 수정 적용
+2. "계속 수정하시겠습니까?" 질문
+3. 추가 수정 또는 종료
+
+## 참조
+
+- 개선 에이전트: `agents/workflow-refiner.md`
+- 스키마: `skills/workflow-schema/SKILL.md`
